@@ -3,12 +3,72 @@
            https://api.github.com/users/<your name>
 */
 
+const cards = document.querySelector('.cards')
+
+axios.get(`https://api.github.com/users/ernienettles`)
+.then(response => {
+  const newResponse = response.data;
+  const element = getElements(newResponse);
+  cards.appendChild(element);
+})
+.catch(error => {
+  console.log(error)
+})
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
 
    Skip to Step 3.
 */
+
+
+
+function getElements(userInfo) {
+  const card = document.createElement('div')
+  const userImage = document.createElement('img')
+  const cardInfo = document.createElement('div')
+  const name = document.createElement('h3')
+  const username = document.createElement('p')
+  const location = document.createElement('p')
+  const profile = document.createElement('p')
+  const profileURL = document.createElement('a')
+  const followers = document.createElement('p')
+  const following = document.createElement('p')
+  const bio = document.createElement('p')
+
+  card.classList.add('card')
+  cardInfo.classList.add('card-info')
+  name.classList.add('name')
+  username.classList.add('username')
+
+  userImage.src = userInfo.avatar_url;
+  name.textContent = userInfo.name;
+  username.textContent = userInfo.login;
+  location.textContent = userInfo.location;
+  profileURL.href = userInfo.html_url;
+  profileURL.textContent = userInfo.html_url;
+  profile.textContent = `Profile: `;
+  followers.textContent = `Followers: ${userInfo.followers}`;
+  following.textContent = `Following: ${userInfo.following}`;
+  bio.textContent = `Bio: ${userInfo.bio}`;
+
+  card.appendChild(userImage)
+  card.appendChild(cardInfo)
+  cardInfo.appendChild(name)
+  cardInfo.appendChild(username)
+  cardInfo.appendChild(location)
+  cardInfo.appendChild(profile)
+  profile.appendChild(profileURL)
+  cardInfo.appendChild(followers)
+  cardInfo.appendChild(following)
+  cardInfo.appendChild(bio)
+
+  return card;
+}
+
+
+
 
 /* Step 4: Pass the data received from Github into your function, 
            create a new component and add it to the DOM as a child of .cards
@@ -23,8 +83,22 @@
           Using that array, iterate over it, requesting data for each user, creating a new card for each
           user, and adding that card to the DOM.
 */
+axios.get(`https://api.github.com/users/ernienettles/followers`)
+.then(response => {
+  const followers = response.data;
+  followers.forEach(name => {
+    axios.get(`https://api.github.com/users/${name.login}`)
+    .then(response => {
+      const newResponse = response.data;
+      const followersElement = getElements(newResponse);
+      cards.appendChild(followersElement);
+    })
+    .catch()
+  })
 
-const followersArray = [];
+})
+.catch()
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -45,6 +119,7 @@ const followersArray = [];
 </div>
 
 */
+
 
 /* List of LS Instructors Github username's: 
   tetondan
